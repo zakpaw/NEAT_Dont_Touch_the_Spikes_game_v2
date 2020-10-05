@@ -26,7 +26,7 @@ def watch_AI():
     # p.add_reporter(neat.StatisticsReporter())
     winner = p.run(Game().run_for_NEAT, num_of_generations)
 
-    print(f'\nBest Bird:\n{winner}')
+    print(f'\n\nBest Bird:\n{winner}')
 
 
 if __name__ == '__main__':
