@@ -33,7 +33,6 @@ class Game_Board(object):
 
 class Game(object):
     def __init__(self):
-        pg.init()
         pg.font.init()
         self.RUNNING = True
         self.HEIGHT = 825
@@ -50,8 +49,8 @@ class Game(object):
         self.screen = pg.display.set_mode(
             [self.WIDTH, self.HEIGHT], pg.RESIZABLE)
         self.init_objects(self.WIDTH, self.HEIGHT)
-        self.clock.tick(60)
         while self.RUNNING:
+            self.clock.tick(60)
             self.draw(self.bird.score, self.g_board.mid)
             self.events_handler()
 
@@ -80,8 +79,9 @@ class Game(object):
             g.fitness = 0
             ge.append(g)
 
+        fps = 60
         while self.RUNNING:
-            self.clock.tick(60)
+            self.clock.tick(fps)
             self.draw(self.bird[0].score, self.g_board.mid, True)
 
             events = pg.event.get()
@@ -90,22 +90,24 @@ class Game(object):
                     self.RUNNING = False
                     pg.quit()
                     quit()
+                if e.type == pg.KEYDOWN:
+                    if e.key == pg.K_UP and fps != 480:
+                        fps = fps*2
+                    if e.key == pg.K_DOWN and fps != 60:
+                        fps = fps/2
 
+            image_height = self.bird[0].image.get_height()
             for x, brd in enumerate(self.bird):
                 if brd.alive:
                     brd.move()
-                    pg.draw.line(self.screen, (0, 255, 0), (brd.x,
-                                                            brd.y), (brd.best_gap[0], brd.best_gap[1]-20))
-                    pg.draw.line(self.screen, (0, 255, 0), (brd.x,
-                                                            brd.y), (brd.best_gap[0], brd.best_gap[1]+20))
 
-                    dist_from_gap = sqrt(
-                        (brd.x-brd.best_gap[0])**2+(brd.y-brd.best_gap[1])**2)
-                    bx, by = brd.x, brd.y+brd.image.get_height()/2
+                    by = brd.y + brd.image.get_height() / 2
                     output = NNets[self.bird.index(brd)].activate(
-                        [bx, by, brd.best_gap[0], brd.best_gap[1]-20, brd.best_gap[1]+20])
+                        [by, abs(by-brd.best_gap[1]-15), abs(brd.best_gap[1]+15)])
+
                     if output[0] > 0.5:
                         brd.jump()
+
                     prev_score = brd.score
                     if not brd.collision_check(self.spikes, True):
                         ge[x].fitness -= 1
@@ -113,7 +115,7 @@ class Game(object):
                         NNets.pop(x)
                         ge.pop(x)
                     else:
-                        if brd.score > prev_score and dist_from_gap <= brd.image.get_width():
+                        if brd.score > prev_score and brd.y <= brd.best_gap[1]+15 and brd.y >= brd.best_gap[1]-15:
                             ge[x].fitness += 5
                         else:
                             ge[x].fitness += 0.01
@@ -139,6 +141,8 @@ class Game(object):
         for e in events:
             if e.type == pg.QUIT:
                 self.RUNNING = False
+                pg.quit()
+                quit()
             if e.type == pg.VIDEORESIZE:
                 self.screen = pg.display.set_mode([e.w, e.h], pg.RESIZABLE)
                 self.WIDTH, self.HEIGHT = e.w, e.h
@@ -147,6 +151,8 @@ class Game(object):
             if e.type == pg.KEYDOWN:
                 if e.key == pg.K_SPACE:
                     self.bird.jump()
+                elif e.key == pg.K_ESCAPE:
+                    self.RUNNING = False
 
     def draw(self, score, mid_pt, AI=False):
         pg.display.set_caption(
