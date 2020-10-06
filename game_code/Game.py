@@ -73,13 +73,13 @@ class Game(object):
         NNets, ge, self.bird = [], [], []
 
         for _, g in genomes:
-            net = neat.nn.FeedForwardNetwork.create(g, config)
+            net = neat.nn.RecurrentNetwork.create(g, config)
             NNets.append(net)
             self.bird.append(Bird(self.g_board, True))
             g.fitness = 0
             ge.append(g)
 
-        fps = 60
+        fps = 240
         while self.RUNNING:
             self.clock.tick(fps)
             self.draw(self.bird[0].score, self.g_board.mid, True)
@@ -101,9 +101,18 @@ class Game(object):
                 if brd.alive:
                     brd.move()
 
-                    by = brd.y + brd.image.get_height() / 2
+                    sign = brd.vel/abs(brd.vel)
+                    bx = brd.x + sign * (brd.image.get_width() / 2)
+                    y_up, y_down = brd.y, brd.y + brd.image.get_height()
+                    site = self.g_board.left if brd.vel < 0 else self.g_board.right
+
                     output = NNets[self.bird.index(brd)].activate(
-                        [by, abs(by-brd.best_gap[1]-15), abs(brd.best_gap[1]+15)])
+                        [y_up, y_down, brd.best_gap[1]-30, brd.best_gap[1]+30, bx, site])
+
+                    pg.draw.line(self.screen, (0, 255, 0),
+                                 (bx, y_up), (site, brd.best_gap[1]-30))
+                    pg.draw.line(self.screen, (0, 255, 0),
+                                 (bx, y_down), (site, brd.best_gap[1]+30))
 
                     if output[0] > 0.5:
                         brd.jump()
@@ -115,11 +124,10 @@ class Game(object):
                         NNets.pop(x)
                         ge.pop(x)
                     else:
-                        if brd.score > prev_score and brd.y <= brd.best_gap[1]+15 and brd.y >= brd.best_gap[1]-15:
-                            ge[x].fitness += 5
-                        else:
-                            ge[x].fitness += 0.01
                         if brd.score > prev_score:
+                            ge[x].fitness += 0.1
+                            if y_down <= brd.best_gap[1]+30 and y_up >= brd.best_gap[1]-30 and brd.score > 0:
+                                ge[x].fitness += 5
                             for brd in self.bird:
                                 brd.find_best_gap(self.spikes)
 
