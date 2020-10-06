@@ -2,6 +2,7 @@ import pygame as pg  # version 2.0.0.dev8
 import pygame_menu
 import neat
 import os
+import pickle
 from game_code.Game import Game
 
 
@@ -30,7 +31,8 @@ class Menu(object):
         self.menu = pygame_menu.Menu(
             self.HEIGHT*9/10, self.WIDTH*9/10, 'Spikes touch NO', theme=mytheme)
         self.menu.add_button('Play', self.play_game)
-        self.menu.add_button('Watch AI play', self.watch_AI)
+        self.menu.add_button('Train AI', self.train_AI)
+        self.menu.add_button('Watch AI play', self.play_AI)
         self.menu.add_button('Quit', pygame_menu.events.EXIT)
 
     def run(self):
@@ -41,8 +43,21 @@ class Menu(object):
     def play_game(self):
         Game().run()
 
-    def watch_AI(self):
-        num_of_generations = 5000
+    def play_AI(self):
+        NNet = pickle.load(open("best.pickle", "rb"))
+        #NNet = [(1, NNet)]
+
+        loc_dir = os.path.dirname(__file__)
+        config_dir = os.path.join(loc_dir, 'data', 'NEATconfig.txt')
+        config = neat.config.Config(neat.DefaultGenome,
+                                    neat.DefaultReproduction,
+                                    neat.DefaultSpeciesSet,
+                                    neat.DefaultStagnation,
+                                    config_dir)
+        Game().watch_NEAT(NNet, config)
+
+    def train_AI(self):
+        num_of_generations = 500
         loc_dir = os.path.dirname(__file__)
         config_dir = os.path.join(loc_dir, 'data', 'NEATconfig.txt')
         config = neat.config.Config(neat.DefaultGenome,
@@ -54,7 +69,7 @@ class Menu(object):
         p = neat.Population(config)
         # p.add_reporter(neat.StdOutReporter(True))
         # p.add_reporter(neat.StatisticsReporter())
-        winner = p.run(Game().run_for_NEAT, num_of_generations)
+        winner = p.run(Game().train_NEAT, num_of_generations)
 
         print(f'\n\nBest Bird:\n{winner}')
 

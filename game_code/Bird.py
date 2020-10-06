@@ -9,8 +9,8 @@ class Bird(pg.sprite.Sprite):
         self.board = board
         self.score = 0
 
-        self.size = (int(26*0.1*board.board_w/17),
-                     int(17*0.1*board.board_w/17))
+        self.size = (int(26*0.1*board.board_w/18),
+                     int(17*0.1*board.board_w/18))
         self.IMGS = [pg.transform.scale(pg.image.load('data/Bird.png'), self.size),
                      pg.transform.scale(pg.image.load('data/Bird_jumping.png'), self.size)]
         self.IMGS = [pg.transform.flip(i, True, False) for i in self.IMGS]
@@ -45,7 +45,7 @@ class Bird(pg.sprite.Sprite):
 
         self.reset_rect()
 
-    def collision_check(self, spikes, AI=False, fitness=None):
+    def collision_check(self, spikes, AI=False):
         # COLISION WITH RIGHT SITE
         if self.x+self.image.get_width()/2 >= self.board.right:
             self.IMGS = [pg.transform.flip(i, True, False) for i in self.IMGS]
@@ -69,13 +69,12 @@ class Bird(pg.sprite.Sprite):
             self.reset_bird(spikes)
 
         if AI:
-            # self.find_best_gap(spikes)
             return self.alive
 
     def find_best_gap(self, spikes):
         distances = []
         for g in spikes.gaps:
-            distances.append(sqrt((self.x-g[0])**2+(self.y-g[1])**2))
+            distances.append(sqrt((self.x - g[0]) ** 2 + (self.y - g[1]) ** 2))
         if len(spikes.gaps) > 0:
             self.best_gap = spikes.gaps[distances.index(min(distances))]
 
