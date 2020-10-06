@@ -1,4 +1,4 @@
-# Bird_AI_v1
+# Bird_AI_v2
 ### Reproduction of famous game "Dont' touch the spikes" with option either to play or watch NEAT algorith train.  
 |GAME|NEAT|
 |---|---|
