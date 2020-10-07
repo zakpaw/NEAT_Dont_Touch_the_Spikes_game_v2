@@ -4,4 +4,4 @@
 |---|---|
 |<img src="https://i.imgur.com/0vIdImR.gif" height=735 widht=466>|<img src="https://i.imgur.com/HnZYaDn.gif" height=735 widht=466>|
 |TRAIN NEAT| |
-|<img src="blob:blob:https//giphy.com/60d720cd-5e15-4b2b-b135-3795daf5c4cc" height=735 widht=466>|.|
+|<img src="https://media2.giphy.com/media/bZhXRRuf0cdRuujd83/giphy.gif" height=735 widht=466>| |
