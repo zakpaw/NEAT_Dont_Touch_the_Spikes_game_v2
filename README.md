@@ -1,4 +1,4 @@
-# NEAT_Dont_Touch_the_Spikes_game_v2
+# NEAT_Dont_Touch_the_Spikes_game_v2[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/fchollet/keras/blob/master/LICENSE)
 ### Reproduction of famous game "Dont' touch the spikes" with option either to play or watch NEAT algorith train.
 |PLAY|WATCH NEAT PLAY|
 |---|---|
