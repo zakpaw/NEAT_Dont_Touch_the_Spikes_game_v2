@@ -133,9 +133,9 @@ class Game(object):
         prev_score, site = 0, 0
         fps = 240
         while self.RUNNING:
-            # self.clock.tick(fps)
+            self.clock.tick(fps)
 
-            #self.draw(self.bird[0].score, self.g_board.mid, True)
+            self.draw(self.bird[0].score, self.g_board.mid, True)
 
             events = pg.event.get()
             for e in events:
@@ -190,7 +190,7 @@ class Game(object):
             if len(self.bird) == 0:
                 self.RUNNING = False
 
-            # pg.display.update()
+            pg.display.update()
 
         global gen
         gen += 1

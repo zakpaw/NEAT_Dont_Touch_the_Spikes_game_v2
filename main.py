@@ -45,7 +45,7 @@ class Menu(object):
 
     def play_AI(self):
         NNet = pickle.load(open("best.pickle", "rb"))
-        #NNet = [(1, NNet)]
+        # NNet = [(1, NNet)]
 
         loc_dir = os.path.dirname(__file__)
         config_dir = os.path.join(loc_dir, 'data', 'NEATconfig.txt')
